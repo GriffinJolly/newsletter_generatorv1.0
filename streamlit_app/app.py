@@ -113,7 +113,8 @@ with st.sidebar:
     # Sector selection
     sectors = [
         "Technology", "Finance", "Healthcare", "Energy", "Consumer Goods",
-        "Industrial", "Utilities", "Real Estate", "Materials", "Communication Services"
+        "Industrial", "Utilities", "Real Estate", "Materials", "Communication Services",
+        "Semiconductors", "Wearable Technology Sensors", "Supply Chain", "Intellectual Property Litigation"
     ]
     selected_sectors = st.multiselect(
         "Select Sectors",
@@ -161,34 +162,147 @@ def generate_wordcloud(text: str) -> str:
     wordcloud.to_image().save(img, format='PNG')
     return base64.b64encode(img.getvalue()).decode('utf-8')
 
+def get_sector_icon(sector: str) -> str:
+    """Get an emoji icon for a given sector"""
+    icons = {
+        "Semiconductors": "🔌",
+        "Wearable Technology Sensors": "⌚",
+        "Supply Chain": "📦",
+        "Intellectual Property Litigation": "⚖️",
+        # Add more mappings as needed
+    }
+    return icons.get(sector, "📰")  # Default to newspaper emoji
+
+def get_sector_description(sector: str) -> str:
+    """Get a description for the sector"""
+    descriptions = {
+        "Semiconductors": "Latest developments in semiconductor technology, chip manufacturing, and industry trends",
+        "Wearable Technology Sensors": "Innovations in wearable sensors, health monitoring, and smart device technology",
+        "Supply Chain": "Global supply chain updates, logistics, and industry analysis",
+        "Intellectual Property Litigation": "Key patent cases, IP disputes, and legal developments in tech"
+    }
+    return descriptions.get(sector, f"Latest news and updates in {sector}")
+
 def create_newsletter_presentation(news_data: Dict[str, List[Dict]], title: str) -> str:
     """Create a PowerPoint presentation from news data"""
     from pptx import Presentation
     from pptx.util import Inches, Pt
     from pptx.dml.color import RGBColor
-    from pptx.enum.text import PP_ALIGN
+    from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+    from pptx.enum.shapes import MSO_SHAPE
     
     prs = Presentation()
+    
+    # Set slide size to 16:9
+    prs.slide_width = Inches(13.333)
+    prs.slide_height = Inches(7.5)
     
     # Title slide
     title_slide_layout = prs.slide_layouts[0]
     slide = prs.slides.add_slide(title_slide_layout)
+    
+    # Format title
     title_shape = slide.shapes.title
-    subtitle = slide.placeholders[1]
-    
     title_shape.text = title
-    subtitle.text = f"Generated on {datetime.now().strftime('%B %d, %Y')}\nSectors: {', '.join(selected_sectors)}"
+    title_shape.text_frame.paragraphs[0].font.size = Pt(44)
+    title_shape.text_frame.paragraphs[0].font.bold = True
     
-    # Add a summary slide
-    summary_slide_layout = prs.slide_layouts[1]
-    slide = prs.slides.add_slide(summary_slide_layout)
-    title = slide.shapes.title
-    content = slide.placeholders[1]
+    # Add subtitle with date and sectors
+    subtitle = slide.placeholders[1]
+    subtitle.text = f"{get_sector_icon('')} Generated on {datetime.now().strftime('%B %d, %Y')}"
+    subtitle.text_frame.paragraphs[0].font.size = Pt(18)
     
-    title.text = "Executive Summary"
-    content.text = f"""• Latest updates from {len(selected_sectors)} key sectors
-• {sum(len(articles) for articles in news_data.values())} articles analyzed
-• Key trends and insights for decision makers"""
+    # Add a text box for sectors
+    left = Inches(1)
+    top = Inches(3)
+    width = Inches(11.3)
+    height = Inches(2)
+    txBox = slide.shapes.add_textbox(left, top, width, height)
+    tf = txBox.text_frame
+    
+    p = tf.add_paragraph()
+    p.text = "Covering Sectors:"
+    p.font.size = Pt(14)
+    p.font.bold = True
+    
+    # Add sectors with icons
+    p = tf.add_paragraph()
+    for sector in selected_sectors:
+        p.text += f"{get_sector_icon(sector)} {sector}  "
+    p.font.size = Pt(16)
+    p.space_after = Pt(12)
+    
+    # Add a summary slide with improved formatting
+    slide_layout = prs.slide_layouts[5]  # Blank layout
+    slide = prs.slides.add_slide(slide_layout)
+    
+    # Add title
+    left = Inches(0.5)
+    top = Inches(0.5)
+    width = Inches(12)
+    height = Inches(1)
+    title_box = slide.shapes.add_textbox(left, top, width, height)
+    title_frame = title_box.text_frame
+    title_p = title_frame.add_paragraph()
+    title_p.text = "EXECUTIVE SUMMARY"
+    title_p.font.size = Pt(28)
+    title_p.font.bold = True
+    title_p.font.color.rgb = RGBColor(59, 89, 152)  # Dark blue
+    
+    # Add a divider line
+    line = slide.shapes.add_shape(
+        MSO_SHAPE.RECTANGLE, left, top + Inches(0.6), width, Inches(0.1)
+    )
+    fill = line.fill
+    fill.solid()
+    fill.fore_color.rgb = RGBColor(59, 89, 152)
+    line.line.fill.background()
+    
+    # Add summary content
+    left = Inches(1)
+    top = Inches(1.5)
+    width = Inches(11)
+    height = Inches(5)
+    content_box = slide.shapes.add_textbox(left, top, width, height)
+    content_frame = content_box.text_frame
+    
+    # Add summary points
+    p = content_frame.add_paragraph()
+    p.text = f"📊 Market Overview"
+    p.font.size = Pt(20)
+    p.font.bold = True
+    p.space_after = Pt(12)
+    
+    p = content_frame.add_paragraph()
+    p.text = f"• Comprehensive analysis of {len(selected_sectors)} key sectors"
+    p.font.size = Pt(14)
+    p.level = 0
+    
+    p = content_frame.add_paragraph()
+    p.text = f"• {sum(len(articles) for articles in news_data.values())} articles analyzed"
+    p.font.size = Pt(14)
+    p.level = 0
+    
+    # Add sector highlights
+    p = content_frame.add_paragraph()
+    p.text = "\n🔍 Sector Highlights"
+    p.font.size = Pt(20)
+    p.font.bold = True
+    p.space_before = Pt(20)
+    p.space_after = Pt(12)
+    
+    for sector in selected_sectors:
+        p = content_frame.add_paragraph()
+        p.text = f"{get_sector_icon(sector)} {sector}:"
+        p.font.size = Pt(14)
+        p.font.bold = True
+        p.level = 0
+        
+        p = content_frame.add_paragraph()
+        p.text = get_sector_description(sector)
+        p.font.size = Pt(12)
+        p.level = 1
+        p.space_after = Pt(8)
     
     # Add a slide for each sector
     for sector, articles in news_data.items():
@@ -293,32 +407,72 @@ def create_newsletter_presentation(news_data: Dict[str, List[Dict]], title: str)
 
 
 def display_news_preview(news_data: Dict[str, List[Dict]]) -> None:
-    """Display a preview of the news data"""
+    """Display a preview of the news data with proper error handling"""
+    if not news_data or not isinstance(news_data, dict):
+        st.warning("No news data available to display.")
+        return
+        
     for sector, articles in news_data.items():
+        if not articles or not isinstance(articles, list):
+            st.warning(f"No articles found for {sector} sector.")
+            continue
+            
         with st.expander(f"📰 {sector} Sector ({len(articles)} articles)", expanded=True):
             for i, article in enumerate(articles, 1):
+                if not article or not isinstance(article, dict):
+                    st.warning(f"Skipping invalid article #{i} in {sector} sector.")
+                    continue
+                    
                 with st.container():
-                    title = article.get('title', 'No title')
-                    description = article.get('description', 'No description available')[:200] + '...'
-                    source = article.get('source', {}).get('name', 'Unknown') if isinstance(article.get('source'), dict) else 'Unknown'
-                    date = article.get('publishedAt', 'Unknown date')
-                    
-                    st.markdown(f"""
-                    <div class="news-card">
-                        <h4>{title}</h4>
-                        <p>{description}</p>
-                        <span class="news-source">Source: {source}</span>
-                        <span class="news-date"> | {date}</span>
-                    </div>
-                    """, unsafe_allow_html=True)
-                    
-                    if st.button("Read more #{}".format(i), key="read_more_{}_{}".format(sector, i)):
-                        st.session_state["article_{}_{}".format(sector, i)] = not st.session_state.get("article_{}_{}".format(sector, i), False)
-                    
-                    if st.session_state.get("article_{}_{}".format(sector, i), False):
-                        st.markdown("---")
-                        st.markdown(article.get('content', 'No content available'))
-                        st.markdown(f"[Read full article]({article.get('url', '#')})")
+                    try:
+                        # Safely get article data with defaults
+                        title = str(article.get('title', 'No title')).strip() or 'Untitled Article'
+                        description = str(article.get('description', '')).strip() or 'No description available'
+                        description = (description[:197] + '...') if len(description) > 200 else description
+                        
+                        # Handle source which could be a dict or string
+                        source = 'Unknown'
+                        if isinstance(article.get('source'), dict):
+                            source = str(article['source'].get('name', 'Unknown')).strip()
+                        elif isinstance(article.get('source'), str):
+                            source = article['source'].strip()
+                            
+                        # Format date
+                        date = 'Date not available'
+                        if article.get('publishedAt'):
+                            try:
+                                date_obj = datetime.fromisoformat(article['publishedAt'].replace('Z', '+00:00'))
+                                date = date_obj.strftime('%B %d, %Y %H:%M')
+                            except (ValueError, AttributeError):
+                                date = str(article['publishedAt'])
+                        
+                        # Display article card
+                        st.markdown(f"""
+                        <div class="news-card" style="margin-bottom: 20px; padding: 15px; border-left: 4px solid #4CAF50; background-color: #f9f9f9;">
+                            <h4 style="margin-top: 0; color: #2c3e50;">{title}</h4>
+                            <p style="color: #34495e;">{description}</p>
+                            <div style="font-size: 0.8em; color: #7f8c8d;">
+                                <span class="news-source">Source: {source}</span>
+                                <span class="news-date"> | {date}</span>
+                            </div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        
+                        # Add read more button if we have content
+                        has_content = bool(article.get('content') or article.get('url'))
+                        if has_content and st.button(f"Read more #{i}", key=f"read_more_{sector}_{i}"):
+                            st.session_state[f"article_{sector}_{i}"] = not st.session_state.get(f"article_{sector}_{i}", False)
+                        
+                        # Show full content if expanded
+                        if st.session_state.get(f"article_{sector}_{i}", False):
+                            st.markdown("---")
+                            st.markdown(article.get('content', 'No additional content available.'))
+                            if article.get('url'):
+                                st.markdown(f"[Read full article]({article['url']})")
+                                
+                    except Exception as e:
+                        st.error(f"Error displaying article #{i} in {sector} sector: {str(e)}")
+                        continue
                     
                     st.markdown("---")
 

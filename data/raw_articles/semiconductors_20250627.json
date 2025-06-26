@@ -1,0 +1,96 @@
+{
+  "query": "Semiconductors",
+  "date": "2025-06-27T00:07:44.069015",
+  "articles": [
+    {
+      "source": "Wired",
+      "author": "Justin Ling",
+      "title": "Taiwan Is Rushing to Make Its Own Drones Before It's Too Late",
+      "description": "Unmanned vehicles are increasingly becoming essential weapons of war. But with a potential conflict with China looming large, Taiwan is scrambling to build a domestic drone industry from scratch.",
+      "url": "https://www.wired.com/story/taiwans-rush-to-make-its-own-drones-before-its-too-late/",
+      "urlToImage": "https://media.wired.com/photos/68558b7a73e4afdd0a892a1c/191:100/w_1280,c_limit/taiwan-drone-sec-1244213170.jpg",
+      "publishedAt": "2025-06-23T10:00:00Z",
+      "content": "But Ukraine also shows the disadvantage at which Taiwan finds itself. In a secret workshop in Kyiv, a Ukrainian drone maker told WIRED that he had no choice but to source his antennas and chips from … [+3051 chars]"
+    },
+    {
+      "source": "Slashdot.org",
+      "author": "BeauHD",
+      "title": "Texas Instruments To Invest $60 Billion To Make Semiconductors In US",
+      "description": "Longtime Slashdot reader walterbyrd shares news that Texas Instruments has announced plans to invest more than $60 billion to expand its U.S. manufacturing operations in the United States. From a report: The funds will be used to build or expand seven chip-ma…",
+      "url": "https://news.slashdot.org/story/25/06/18/2310223/texas-instruments-to-invest-60-billion-to-make-semiconductors-in-us",
+      "urlToImage": "https://a.fsdn.com/sd/topics/business_64.png",
+      "publishedAt": "2025-06-19T01:20:00Z",
+      "content": "The funds will be used to build or expand seven chip-making facilities in Texas as well as Utah, and will create 60,000 jobs, TI said on Wednesday, calling it the \"largest investment in foundational … [+1018 chars]"
+    },
+    {
+      "source": "Theregister.com",
+      "author": "Simon Sharwood",
+      "title": "China just two years behind USA on chip design, says White House tech Czar",
+      "description": "Expects Huawei to start exporting AI chips soon, creating global fight for tech stack dominance\nChina’s AI and chipmaking prowess lags the USA’s by just two years, and America’s efforts to slow its progress could be hobbling its own semiconductor industry, ac…",
+      "url": "https://www.theregister.com/2025/06/20/china_us_chip_competition/",
+      "urlToImage": "https://regmedia.co.uk/2023/01/30/shutterstock_china_us_chip_trade_war.jpg",
+      "publishedAt": "2025-06-20T01:31:13Z",
+      "content": "Chinas AI and chipmaking prowess lags the USAs by just two years, and Americas efforts to slow its progress could be hobbling its own semiconductor industry, according to Trump administration tech cz… [+2616 chars]"
+    },
+    {
+      "source": "Quartz India",
+      "author": "Michael Barclay",
+      "title": "Texas Instruments will invest $60 billion in U.S. chipmaking",
+      "description": "The company will expand its operations in Utah and its home state of Texas",
+      "url": "https://qz.com/texas-instruments-invest-60-billion-in-us-chipmaking",
+      "urlToImage": "https://qz.com/_next/static/media/logo-initials.7c4a39d5.webp",
+      "publishedAt": "2025-06-18T19:06:40Z",
+      "content": "Texas Instruments is investing $60 billion in seven semiconductor fabrication plants, or fabs, which the company says is the largest such investment in U.S. history. The seven fabs will be spread acr… [+1389 chars]"
+    },
+    {
+      "source": "Theregister.com",
+      "author": "Tobias Mann",
+      "title": "Huawei’s latest notebook shows China is still generations behind in chipmaking",
+      "description": "Kirin X90 SoC made on two-year-old 7nm N+2 process\nDespite concerted efforts by the Chinese to bolster domestic semiconductor production in defiance of US trade policy, new evidence uncovered by Canadian research outlet TechInsights suggests SMIC, the Middle …",
+      "url": "https://www.theregister.com/2025/06/23/huaweis_foldable_shows_china_years_behind_tsmc/",
+      "urlToImage": "https://regmedia.co.uk/2021/10/27/shutterstock_sliding_snail.jpg",
+      "publishedAt": "2025-06-23T20:35:26Z",
+      "content": "Despite concerted efforts by the Chinese to bolster domestic semiconductor production in defiance of US trade policy, new evidence uncovered by Canadian research outlet TechInsights suggests SMIC, th… [+4375 chars]"
+    },
+    {
+      "source": "Digitimes",
+      "author": "Sherri Wang",
+      "title": "SK Hynix unveils 30-Year DRAM roadmap with Vertical Gate, 3D stack in bid to extend Moore's Law",
+      "description": "SK Hynix has unveiled a long-term roadmap for next-generation DRAM technologies, laying out a vision that aims to drive sustainable innovation over the next 30 years as the global semiconductor industry undergoes rapid transformation.",
+      "url": "https://www.digitimes.com/news/a20250611PD239/sk-hynix-dram-roadmap-3d-performance.html",
+      "urlToImage": "https://img.digitimes.com/newsshow/20250611pd239_files/2_b.jpg",
+      "publishedAt": "2025-06-13T02:41:08Z",
+      "content": "Save my User ID and Password\r\nSome subscribers prefer to save their log-in information so they do not have to enter their User ID and Password each time they visit the site. To activate this function… [+307 chars]"
+    },
+    {
+      "source": "Digitimes",
+      "author": "Eifeh Strom",
+      "title": "Chinese graduates seeking semiconductor jobs targeted by scams",
+      "description": "Fresh college graduates in China looking to enter the employment force have their hearts set on major players in the semiconductor industry. However, as they rush to submit resumes, the risk of being scammed has quietly grown.",
+      "url": "https://www.digitimes.com/news/a20250620PD237/china-talent-semiconductor-industry-cxmt-2025.html",
+      "urlToImage": "https://img.digitimes.com/newsshow/20250620pd237_files/2_b.jpg",
+      "publishedAt": "2025-06-23T02:30:59Z",
+      "content": "Save my User ID and Password\r\nSome subscribers prefer to save their log-in information so they do not have to enter their User ID and Password each time they visit the site. To activate this function… [+307 chars]"
+    },
+    {
+      "source": "Yahoo Entertainment",
+      "author": null,
+      "title": "Intel Veterans Raise $22M To Disrupt The Semiconductor Industry With The 'Baddest CPU In The World,' Backed By Apple And AMD Alum Jim Keller",
+      "description": null,
+      "url": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_4b86a596-a54e-428c-9996-30b30367a0b2",
+      "urlToImage": null,
+      "publishedAt": "2025-06-15T00:00:20Z",
+      "content": "If you click 'Accept all', we and our partners, including 240 who are part of the IAB Transparency &amp; Consent Framework, will also store and/or access information on a device (in other words, use … [+714 chars]"
+    },
+    {
+      "source": "Investopedia",
+      "author": "Andrew Kessel",
+      "title": "Ambarella's Stock Pops 20% as the Chip Designer Reportedly Mulls a Sale",
+      "description": "Shares of Ambarella jumped just over 20% Tuesday following a Bloomberg report the chip designer is considering a sale.",
+      "url": "https://www.investopedia.com/ambarella-stock-pops-20-percent-as-the-chip-designer-reportedly-mulls-a-sale-11760482",
+      "urlToImage": "https://s.yimg.com/ny/api/res/1.2/ScZOHclNBwDp0HsgZtmi4g--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA-/https://media.zenfs.com/en/investopedia_245/81b8c17eb23e356e401444c52ce41285",
+      "publishedAt": "2025-06-24T20:16:27Z",
+      "content": "Cheng Xin / Getty Images\r\n Even with Tuesday's gains, Ambarella shares have lost about 15% of their value in 2025.\r\n<ul><li>Ambarella shares rallied Tuesday after Bloomberg reported the company is co… [+1163 chars]"
+    }
+  ]
+}

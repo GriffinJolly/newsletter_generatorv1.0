@@ -1,5 +1,52 @@
 {
   "query": "Finance",
-  "date": "2025-06-26T17:21:51.692312",
-  "articles": []
+  "date": "2025-06-26T23:56:34.101858",
+  "articles": [
+    {
+      "source": {
+        "id": null,
+        "name": "NPR"
+      },
+      "author": "Deirdre Walsh",
+      "title": "Trump's signature policy bill is facing trouble on multiple fronts in the Senate",
+      "description": "While Senate leaders have made several significant changes to the bill in recent days, the issue of funding for rural hospitals has emerged as a major roadblock.",
+      "url": "https://www.npr.org/2025/06/25/nx-s1-5445185/trump-gop-megabill-senate",
+      "urlToImage": "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/5555x3125+0+289/resize/1400/quality/100/format/jpeg/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F41%2Fea%2F86e51c1a4230a0cb9d11437a326c%2Fap25175712364390.jpg",
+      "publishedAt": "2025-06-25T18:23:46Z",
+      "content": "Senate Republicans are racing the clock, trying to meet President Trump's demand that they pass his domestic agenda bill by July 4th as they work to resolve major sticking points inside the GOP confe… [+7362 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Slashdot.org"
+      },
+      "author": "feedfeeder",
+      "title": "Divided Fed proposes rule to ease capital requirements for big Wall Street banks - CNBC",
+      "description": "Divided Fed proposes rule to ease capital requirements for big Wall Street banksCNBC Fed kicks off effort to ease bank leverage rulesReuters Big banks are closer to getting one of biggest regulatory rollbacks since 2008Yahoo Finance Federal Reserve Releases P…",
+      "url": "https://slashdot.org/firehose.pl?op=view&amp;id=178180590",
+      "urlToImage": null,
+      "publishedAt": "2025-06-25T18:15:01Z",
+      "content": "The Fine Print: The following comments are owned by whoever posted them. We are not responsible for them in any way."
+    },
+    {
+      "title": "Money blog: Pound at near four-year high against dollar - which could be good news for shoppers",
+      "description": "Welcome to the Money blog, Sky News' personal finance and consumer hub. Today: our weekly Cheap Eats feature, in which a top chef tells us his most controversial opinion. And good mortgage news from Nationwide. Sign up below for our Money newsletter before the next edition on Friday.",
+      "url": "https://news.sky.com/story/money-blog-pound-at-near-four-year-high-against-dollar-which-could-be-good-news-for-shoppers-13040934",
+      "publishedAt": "2025-06-26T15:00:00Z",
+      "source": {
+        "name": "Sky News"
+      },
+      "content": "Sign up to Money newsletter for exclusive tips, features and sneak previews\nOur Money newsletter brings the kind of content you enjoy in the Money blog directly to your inbox every Friday.\nSubscribers get top tips and exclusive content, with digestib... [401 chars]"
+    },
+    {
+      "title": "Money blog: Nationwide changes mortgage rules to help first time buyers afford new builds",
+      "description": "Welcome to the Money blog, Sky News' personal finance and consumer hub. Today: our weekly Cheap Eats feature, in which a top chef tells us his most controversial opinion. And good mortgage news from Nationwide. Sign up below for our Money newsletter before the next edition on Friday.",
+      "url": "https://news.sky.com/story/money-blog-nationwide-changes-mortgage-rules-to-help-first-time-buyers-afford-new-builds-13040934",
+      "publishedAt": "2025-06-26T09:59:00Z",
+      "source": {
+        "name": "Sky News"
+      },
+      "content": "Top TV chef on why you should pay for your meals out in advance\nEvery Thursday, our Money blog team interviews chefs from around the UK, hearing about their cheap food hacks and more. This week, we chat to Mike Reid, renowned TV chef and \"Aussie Beef... [5370 chars]"
+    }
+  ]
 }

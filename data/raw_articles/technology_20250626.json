@@ -1,5 +1,52 @@
 {
   "query": "Technology",
-  "date": "2025-06-26T17:21:50.596197",
-  "articles": []
+  "date": "2025-06-26T23:56:31.037494",
+  "articles": [
+    {
+      "source": {
+        "id": null,
+        "name": "New York Post"
+      },
+      "author": "Matt Levy",
+      "title": "Reese Witherspoon announces speaking tour, NYC show. Get tickets today",
+      "description": "The Oscar winner will take the stage to chat about her new thriller novel at Town Hall on Oct. 13.",
+      "url": "https://nypost.com/2025/06/25/ticket-sales/reese-witherspoon-book-tour-2025-where-to-buy-tickets-schedule/",
+      "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/06/Reese-Witherspoon.jpg?quality=75&strip=all&w=1024",
+      "publishedAt": "2025-06-25T18:25:37Z",
+      "content": "Vivid Seats is the New York Post's official ticketing partner. We may receive revenue from this partnership for sharing this content and/or when you make a purchase. Featured pricing is subject to ch… [+4013 chars]"
+    },
+    {
+      "source": {
+        "id": null,
+        "name": "Infuze.cloud"
+      },
+      "author": "ccheshirecat",
+      "title": "Show HN: I built a cloud on my own ASN w real 1:1 compute to fight the cartels",
+      "description": "Sup HN\nI'm MX, a solo founder building Infuze Cloud, launching as a beta today.I started this project because I was tired of a long list of reasons why the cartels are ridiculous that I shall not dwell on for too long here because I had to rewrite this twice …",
+      "url": "https://www.infuze.cloud",
+      "urlToImage": null,
+      "publishedAt": "2025-06-25T18:25:18Z",
+      "content": "Managed Databases\r\nFully managed database services including PostgreSQL, MySQL, MongoDB, and Redis with automated backups and scaling."
+    },
+    {
+      "title": "Iceland announce major change at checkouts as part of crackdown",
+      "description": "Another major British supermarket rolled out the new piece of technology earlier this year",
+      "url": "https://www.manchestereveningnews.co.uk/news/uk-news/iceland-major-change-checkouts-shoplifters-31938403",
+      "publishedAt": "2025-06-26T12:23:02Z",
+      "source": {
+        "name": "Manchester Evening News"
+      },
+      "content": "Iceland announce major change at checkouts as part of crackdown\nAnother major British supermarket rolled out the new piece of technology earlier this year\nThe Iceland store in Williamson Square in Liverpool. (Image: Andrew Teebay/Liverpool Echo )\nIce... [2997 chars]"
+    },
+    {
+      "title": "How smart tech is supporting health on the home front",
+      "description": "Smart-home technology – from wellness lighting to digital locks – has evolved beyond convenience to help improve health and emotional well-being",
+      "url": "https://www.theglobeandmail.com/life/health-and-fitness/article-how-smart-tech-is-supporting-health-on-the-home-front/",
+      "publishedAt": "2025-06-26T10:00:00Z",
+      "source": {
+        "name": "The Globe and Mail"
+      },
+      "content": "Open this photo in gallery: Solomon Siegel’s home in Victoria has a smart-light network that mimics the day-to-night light sequence, aligning with the body’s circadian rhythm to support better sleep and energy.Chad Hipolito\nVictoria restaurateur, rea... [6782 chars]"
+    }
+  ]
 }
