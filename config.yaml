@@ -1,0 +1,67 @@
+# Application Configuration
+app:
+  name: "Sector Intelligence Newsletter Generator"
+  version: "1.0.0"
+  debug: true
+
+# Data Sources
+data_sources:
+  news_api:
+    enabled: true
+    api_key: ""  # Will be loaded from environment variables
+    base_url: "https://newsapi.org/v2"
+    
+  sec_edgar:
+    enabled: true
+    base_url: "https://www.sec.gov/Archives/edgar/xbrlrss"
+    
+  gnews:
+    enabled: true
+    api_key: ""  # Will be loaded from environment variables
+    base_url: "https://gnews.io/api/v4"
+
+# NLP Models
+models:
+  ner_model: "en_core_web_lg"
+  summarization_model: "facebook/bart-large-cnn"
+  embedding_model: "all-MiniLM-L6-v2"
+
+# Default Sectors
+sectors:
+  - Technology
+  - Healthcare
+  - Finance
+  - Energy
+  - Manufacturing
+  - Retail
+  - Telecommunications
+  - Automotive
+
+# Insight Types
+insight_types:
+  - Mergers & Acquisitions
+  - Innovations
+  - Partnerships
+  - Market Trends
+  - Regulatory Changes
+  - Leadership Changes
+  - Financial Results
+  - Product Launches
+
+# UI Settings
+ui:
+  theme:
+    primary_color: "#1f77b4"
+    secondary_color: "#ff7f0e"
+    background_color: "#f0f2f6"
+    
+# Output Settings
+output:
+  directory: "./output"
+  template: "default"
+  image_dir: "./data/logos"
+  
+# Cache Settings
+cache:
+  enabled: true
+  ttl: 86400  # 24 hours in seconds
