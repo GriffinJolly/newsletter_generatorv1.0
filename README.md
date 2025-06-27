@@ -14,8 +14,8 @@ A Python application that generates professional-quality sector-specific newslet
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/sector-intelligence-newsletter.git
-   cd sector-intelligence-newsletter
+   git clone https://github.com/GriffinJolly/newsletter_generatorv1.0.git
+   cd newsletter_generatorv1.0
    ```
 
 2. Create and activate a virtual environment:
