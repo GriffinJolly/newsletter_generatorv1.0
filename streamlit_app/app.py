@@ -3,6 +3,7 @@ import os
 from datetime import datetime, timedelta
 import yaml
 from pathlib import Path
+from pptx.util import Inches, Pt
 import sys
 import logging
 from typing import Dict, List, Any, Optional
@@ -184,222 +185,90 @@ def get_sector_description(sector: str) -> str:
     return descriptions.get(sector, f"Latest news and updates in {sector}")
 
 def create_newsletter_presentation(news_data: Dict[str, List[Dict]], title: str) -> str:
-    """Create a PowerPoint presentation from news data"""
-    from pptx import Presentation
-    from pptx.util import Inches, Pt
-    from pptx.dml.color import RGBColor
-    from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
-    from pptx.enum.shapes import MSO_SHAPE
+    """Create a PowerPoint presentation from news data using the NewsletterPPTGenerator"""
+    from ppt_generator.build_ppt import NewsletterPPTGenerator
+    from pathlib import Path
+    import os
     
-    prs = Presentation()
+    # Create output directory if it doesn't exist
+    output_dir = Path('output')
+    output_dir.mkdir(exist_ok=True)
     
-    # Set slide size to 16:9
-    prs.slide_width = Inches(13.333)
-    prs.slide_height = Inches(7.5)
+    # Prepare configuration for the PPT generator
+    config = {
+        'output_dir': str(output_dir),
+        'template_path': '',
+        'logo_path': 'assets/logo.png'  # Update this path if you have a logo
+    }
     
-    # Title slide
-    title_slide_layout = prs.slide_layouts[0]
-    slide = prs.slides.add_slide(title_slide_layout)
+    # Initialize the PPT generator
+    ppt_generator = NewsletterPPTGenerator(config)
     
-    # Format title
-    title_shape = slide.shapes.title
-    title_shape.text = title
-    title_shape.text_frame.paragraphs[0].font.size = Pt(44)
-    title_shape.text_frame.paragraphs[0].font.bold = True
+    # Create a new presentation
+    prs = ppt_generator._create_new_presentation()
+    ppt_generator.prs = prs
     
-    # Add subtitle with date and sectors
-    subtitle = slide.placeholders[1]
-    subtitle.text = f"{get_sector_icon('')} Generated on {datetime.now().strftime('%B %d, %Y')}"
-    subtitle.text_frame.paragraphs[0].font.size = Pt(18)
+    # Add title slide
+    slide = ppt_generator._add_blank_slide(prs)
     
-    # Add a text box for sectors
-    left = Inches(1)
-    top = Inches(3)
-    width = Inches(11.3)
-    height = Inches(2)
-    txBox = slide.shapes.add_textbox(left, top, width, height)
-    tf = txBox.text_frame
+    # Add newsletter header with more spacing
+    issue_date = datetime.now().strftime('%B %d, %Y')
+    ppt_generator._add_newsletter_header(slide, title, f"ISSUE • {issue_date}")
     
-    p = tf.add_paragraph()
-    p.text = "Covering Sectors:"
-    p.font.size = Pt(14)
-    p.font.bold = True
-    
-    # Add sectors with icons
-    p = tf.add_paragraph()
-    for sector in selected_sectors:
-        p.text += f"{get_sector_icon(sector)} {sector}  "
-    p.font.size = Pt(16)
-    p.space_after = Pt(12)
-    
-    # Add a summary slide with improved formatting
-    slide_layout = prs.slide_layouts[5]  # Blank layout
-    slide = prs.slides.add_slide(slide_layout)
-    
-    # Add title
-    left = Inches(0.5)
-    top = Inches(0.5)
-    width = Inches(12)
-    height = Inches(1)
-    title_box = slide.shapes.add_textbox(left, top, width, height)
-    title_frame = title_box.text_frame
-    title_p = title_frame.add_paragraph()
-    title_p.text = "EXECUTIVE SUMMARY"
-    title_p.font.size = Pt(28)
-    title_p.font.bold = True
-    title_p.font.color.rgb = RGBColor(59, 89, 152)  # Dark blue
-    
-    # Add a divider line
-    line = slide.shapes.add_shape(
-        MSO_SHAPE.RECTANGLE, left, top + Inches(0.6), width, Inches(0.1)
-    )
-    fill = line.fill
-    fill.solid()
-    fill.fore_color.rgb = RGBColor(59, 89, 152)
-    line.line.fill.background()
-    
-    # Add summary content
-    left = Inches(1)
-    top = Inches(1.5)
-    width = Inches(11)
-    height = Inches(5)
-    content_box = slide.shapes.add_textbox(left, top, width, height)
-    content_frame = content_box.text_frame
-    
-    # Add summary points
-    p = content_frame.add_paragraph()
-    p.text = f"📊 Market Overview"
-    p.font.size = Pt(20)
-    p.font.bold = True
-    p.space_after = Pt(12)
-    
-    p = content_frame.add_paragraph()
-    p.text = f"• Comprehensive analysis of {len(selected_sectors)} key sectors"
-    p.font.size = Pt(14)
-    p.level = 0
-    
-    p = content_frame.add_paragraph()
-    p.text = f"• {sum(len(articles) for articles in news_data.values())} articles analyzed"
-    p.font.size = Pt(14)
-    p.level = 0
-    
-    # Add sector highlights
-    p = content_frame.add_paragraph()
-    p.text = "\n🔍 Sector Highlights"
-    p.font.size = Pt(20)
-    p.font.bold = True
-    p.space_before = Pt(20)
-    p.space_after = Pt(12)
-    
-    for sector in selected_sectors:
-        p = content_frame.add_paragraph()
-        p.text = f"{get_sector_icon(sector)} {sector}:"
-        p.font.size = Pt(14)
-        p.font.bold = True
-        p.level = 0
-        
-        p = content_frame.add_paragraph()
-        p.text = get_sector_description(sector)
-        p.font.size = Pt(12)
-        p.level = 1
-        p.space_after = Pt(8)
-    
-    # Add a slide for each sector
+    # Add content slides for each sector
     for sector, articles in news_data.items():
         if not articles:
-            logger.warning(f"No articles found for {sector}, skipping...")
             continue
             
-        try:
-            # Sector title slide
-            slide = prs.slides.add_slide(prs.slide_layouts[1])
-            title = slide.shapes.title
-            content = slide.placeholders[1]
-            title.text = f"{sector} Sector Update"
-            
-            # Add a word cloud for the sector
-            all_text = ' '.join([
-                str(a.get('content', '') or a.get('description', '') or a.get('title', '') or '')
-                for a in articles
-            ]).strip()
-            
-            if all_text:
-                try:
-                    img_data = generate_wordcloud(all_text)
-                    img_path = f"wordcloud_{sector.lower().replace(' ', '_')}.png"
-                    with open(img_path, 'wb') as f:
-                        f.write(base64.b64decode(img_data))
-                    
-                    slide = prs.slides.add_slide(prs.slide_layouts[5])
-                    slide.shapes.title.text = f"{sector} - Word Cloud"
-                    left = Inches(1)
-                    top = Inches(1.5)
-                    height = Inches(5)
-                    slide.shapes.add_picture(img_path, left, top, height=height)
-                    
-                    try:
-                        os.remove(img_path)
-                    except Exception as e:
-                        logger.warning(f"Could not remove temporary file {img_path}: {e}")
-                        
-                except Exception as e:
-                    logger.error(f"Error generating word cloud for {sector}: {e}")
-                    
-            # Add slides for each article
-            for article in articles:
-                try:
-                    slide = prs.slides.add_slide(prs.slide_layouts[1])
-                    title = slide.shapes.title
-                    content = slide.placeholders[1]
-                    
-                    title.text = article.get('title', 'No Title')
-                    
-                    # Format the content
-                    source = article.get('source', {}) if isinstance(article.get('source'), dict) else {'name': str(article.get('source', 'Unknown'))}
-                    published = article.get('publishedAt', '')
-                    if published:
-                        try:
-                            published = datetime.strptime(published, '%Y-%m-%dT%H:%M:%SZ').strftime('%B %d, %Y')
-                        except:
-                            pass
-                    
-                    content.text = f"""
-                    Source: {source.get('name', 'Unknown')}
-                    Published: {published}
-                    
-                    {article.get('description', 'No description available')}
-                    
-                    {article.get('content', '')}
-                    """.strip()
-                    
-                except Exception as e:
-                    logger.error(f"Error creating slide for article: {e}")
-                    continue
-                    
-        except Exception as e:
-            logger.error(f"Error processing sector {sector}: {e}")
-            continue
-            
-    # Add a summary slide at the end
-    try:
-        slide = prs.slides.add_slide(prs.slide_layouts[1])
-        title = slide.shapes.title
-        content = slide.placeholders[1]
-        title.text = "Key Insights & Next Steps"
-        content.text = "• Review the latest market trends\n• Consider the impact on your portfolio\n• Stay tuned for our next update"
-    except Exception as e:
-        logger.error(f"Error creating summary slide: {e}")
+        # Add section header slide
+        slide = ppt_generator._add_blank_slide(prs)
         
+        # Add section title with more spacing
+        title_box = slide.shapes.add_textbox(
+            Inches(0.5), Inches(0.5), 
+            prs.slide_width - Inches(1), Inches(1.5)  # Increased height for better spacing
+        )
+        title_frame = title_box.text_frame
+        title_frame.margin_bottom = Inches(0.3)  # Add bottom margin
+        p = title_frame.paragraphs[0]
+        p.text = sector.upper()
+        p.font.size = Pt(28)  # Slightly larger font
+        p.font.bold = True
+        p.space_after = Pt(24)  # Add space after title
+        
+        # Add articles for this sector
+        for article in articles:
+            # Add a new slide for each article
+            slide = ppt_generator._add_blank_slide(prs)
+            
+            # Format the article data for the card
+            source = article.get('source', {})
+            source_name = source.get('name', 'Unknown Source') if isinstance(source, dict) else str(source)
+            
+            article_data = {
+                'title': article.get('title', 'No Title'),
+                'source': source_name,
+                'date': article.get('publishedAt', '')[:10],
+                'summary': article.get('description', 'No summary available.'),
+                'categories': [sector],
+                'content': article.get('content', '')
+            }
+            
+            # Add article card to the slide
+            ppt_generator._add_article_card(slide, article_data, (0.5, 1.5, 12, 4.5))
+    
     # Save the presentation
+    output_dir = Path('output')
+    output_dir.mkdir(exist_ok=True, parents=True)
+    
+    # Create a safe filename from the title
+    safe_title = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in title.strip())
+    output_path = output_dir / f"{safe_title.replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pptx"
+    
     try:
-        title_str = str(title).strip() if title is not None else "newsletter"
-        safe_title = "".join(c if c.isalnum() or c in (' ', '-', '_') else '_' for c in title_str)
-        newsletter_filename = f"{safe_title.replace(' ', '_').lower()}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.pptx"
-        output_path = str(Path(CONFIG['output']['directory']) / newsletter_filename)
-        os.makedirs(os.path.dirname(output_path), exist_ok=True)
         prs.save(output_path)
         logger.info(f"Presentation saved to {output_path}")
-        return output_path
+        return str(output_path)
     except Exception as e:
         logger.error(f"Error saving presentation: {e}")
         raise

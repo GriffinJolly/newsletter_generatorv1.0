@@ -29,26 +29,29 @@ class NewsletterPPTGenerator:
         # Create output directory if it doesn't exist
         self.output_dir.mkdir(parents=True, exist_ok=True)
         
-        # Modern newsletter color palette
+        # Professional color palette
         self.colors = {
-            'primary': (41, 84, 144),      # Deep blue
-            'secondary': (72, 133, 237),   # Bright blue
-            'accent': (255, 87, 51),       # Coral red
-            'success': (46, 204, 113),     # Green
-            'warning': (241, 196, 15),     # Yellow
-            'background': (248, 249, 250), # Light gray
-            'white': (255, 255, 255),      # White
-            'dark': (33, 37, 41),          # Dark gray
-            'light_text': (108, 117, 125), # Light gray text
-            'border': (206, 212, 218)      # Border gray
+            'primary': (13, 59, 102),      # Dark blue
+            'secondary': (27, 85, 226),    # Vibrant blue
+            'accent': (1, 180, 228),       # Cyan accent
+            'success': (57, 181, 74),      # Fresh green
+            'warning': (255, 183, 3),      # Amber
+            'background': (250, 250, 252), # Off-white
+            'white': (255, 255, 255),      # Pure white
+            'dark': (20, 24, 36),          # Near black
+            'light_text': (108, 117, 125), # Gray text
+            'border': (233, 236, 239),     # Light border
+            'gradient_start': (245, 247, 250),  # Light gray gradient start
+            'gradient_end': (255, 255, 255)     # White gradient end
         }
         
-        # Typography settings
+        # Typography settings with fallbacks for cross-platform compatibility
         self.fonts = {
-            'heading': 'Montserrat',
-            'subheading': 'Open Sans',
-            'body': 'Segoe UI',
-            'accent': 'Georgia'
+            'heading': 'Montserrat, Arial, sans-serif',
+            'subheading': 'Open Sans, Arial, sans-serif',
+            'body': 'Segoe UI, Arial, sans-serif',
+            'accent': 'Georgia, Times New Roman, serif',
+            'mono': 'Courier New, monospace'
         }
         
         # Slide layouts
@@ -64,7 +67,97 @@ class NewsletterPPTGenerator:
             'picture_with_caption': 8
         }
     
-    def _create_gradient_background(self, slide, color1: tuple, color2: tuple) -> None:
+    def _create_new_presentation(self):
+        """Create a new presentation with default settings"""
+        from pptx import Presentation
+        from pptx.util import Inches
+        
+        # Create a new presentation with a blank layout
+        prs = Presentation()
+        
+        # Set slide size to 16:9 (widescreen)
+        prs.slide_width = Inches(13.333)
+        prs.slide_height = Inches(7.5)
+        
+        # Return the presentation
+        return prs
+        
+    def _add_blank_slide(self, prs):
+        """Add a blank slide to the presentation"""
+        # Use the blank layout (index 6)
+        blank_slide_layout = prs.slide_layouts[6]
+        return prs.slides.add_slide(blank_slide_layout)
+        
+    def _add_newsletter_header(self, slide, title: str, subtitle: str = "") -> None:
+        """Add a professional newsletter header to the slide"""
+        # Add a rectangle for the header background
+        header = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            0, 0,
+            slide.width, Inches(1.5)
+        )
+        
+        # Style the header
+        fill = header.fill
+        fill.solid()
+        fill.fore_color.rgb = RGBColor(*self.colors['primary'])
+        header.line.fill.background()
+        
+        # Add logo if available
+        if hasattr(self, 'logo_path') and self.logo_path.exists():
+            try:
+                logo = slide.shapes.add_picture(
+                    str(self.logo_path),
+                    Inches(0.5), Inches(0.25),
+                    height=Inches(1.0)
+                )
+                # Position title to the right of the logo
+                title_left = logo.left + logo.width + Inches(0.5)
+            except Exception as e:
+                logger.warning(f"Could not add logo: {e}")
+                title_left = Inches(0.5)
+        else:
+            title_left = Inches(0.5)
+        
+        # Add title
+        title_box = slide.shapes.add_textbox(
+            title_left, Inches(0.4),
+            slide.width - title_left - Inches(0.5), Inches(0.7)
+        )
+        tf = title_box.text_frame
+        p = tf.paragraphs[0]
+        p.text = title.upper()
+        p.font.name = self.fonts['heading'].split(',')[0].strip()
+        p.font.size = Pt(24)
+        p.font.bold = True
+        p.font.color.rgb = RGBColor(*self.colors['white'])
+        p.space_after = 0
+        
+        # Add subtitle if provided
+        if subtitle:
+            subtitle_box = slide.shapes.add_textbox(
+                title_left, Inches(0.9),
+                slide.width - title_left - Inches(0.5), Inches(0.4)
+            )
+            tf = subtitle_box.text_frame
+            p = tf.paragraphs[0]
+            p.text = subtitle.upper()
+            p.font.name = self.fonts['subheading'].split(',')[0].strip()
+            p.font.size = Pt(12)
+            p.font.color.rgb = RGBColor(*self.colors['white'])
+            p.space_after = 0
+        
+        # Add a subtle separator line
+        line = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            0, Inches(1.5) - Pt(2),
+            slide.width, Pt(2)
+        )
+        line.fill.solid()
+        line.fill.fore_color.rgb = RGBColor(*self.colors['accent'])
+        line.line.fill.background()
+        
+    def _create_gradient_background(self, slide) -> None:
         """Create a subtle gradient background"""
         # Add a rectangle shape for background
         left = 0
@@ -78,199 +171,285 @@ class NewsletterPPTGenerator:
         
         # Set fill to gradient
         fill = bg_shape.fill
-        fill.solid()
-        fill.fore_color.rgb = RGBColor(*color1)
+        fill.gradient()
+        fill.gradient_angle = 45
+        
+        # Gradient stops
+        fill.gradient_stops[0].position = 0.0
+        fill.gradient_stops[0].color.rgb = RGBColor(*self.colors['gradient_start'])
+        fill.gradient_stops[1].position = 1.0
+        fill.gradient_stops[1].color.rgb = RGBColor(*self.colors['gradient_end'])
+        
+        # Remove border
+        bg_shape.line.fill.background()
         
         # Send to back
         bg_shape.z_order = 0
     
-    def _add_decorative_header_bar(self, slide, color: tuple = None) -> None:
-        """Add a decorative header bar"""
-        if not color:
-            color = self.colors['accent']
-        
-        # Add header bar
+    def _add_decorative_header_bar(self, slide) -> None:
+        """Add a modern header bar with subtle shadow"""
+        # Main header bar
         left = 0
         top = 0
         width = slide.parent.slide_width
-        height = Inches(0.2)
+        height = Inches(0.25)
         
+        # Add subtle shadow effect (semi-transparent black)
+        shadow = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE, 
+            left + Pt(2), top + Pt(2), 
+            width, height
+        )
+        shadow.fill.solid()
+        shadow.fill.fore_color.rgb = RGBColor(0, 0, 0)
+        shadow.fill.alpha = 0.1
+        shadow.line.fill.background()
+        
+        # Main header bar
         header_bar = slide.shapes.add_shape(
             MSO_SHAPE.RECTANGLE, left, top, width, height
         )
         
+        # Gradient fill
         fill = header_bar.fill
-        fill.solid()
-        fill.fore_color.rgb = RGBColor(*color)
+        fill.gradient()
+        fill.gradient_angle = 0
+        
+        # Gradient from primary to secondary color
+        fill.gradient_stops[0].position = 0.0
+        fill.gradient_stops[0].color.rgb = RGBColor(*self.colors['primary'])
+        fill.gradient_stops[1].position = 1.0
+        fill.gradient_stops[1].color.rgb = RGBColor(*self.colors['secondary'])
         
         # Remove border
         header_bar.line.fill.background()
+        
+        # Add a thin accent line at the bottom
+        accent_line = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            left, top + height - Pt(2),
+            width, Pt(4)
+        )
+        accent_line.fill.solid()
+        accent_line.fill.fore_color.rgb = RGBColor(*self.colors['accent'])
+        accent_line.line.fill.background()
     
     def _add_newsletter_header(self, slide, title: str, issue_info: str = "") -> None:
-        """Add a professional newsletter header"""
-        # Add decorative top bar
-        self._add_decorative_header_bar(slide)
+        """Add a clean, structured newsletter header"""
+        # Create a header box
+        header_box = self._create_content_box(
+            slide, 
+            (0.25, 0.25, 13.5, 1.5),
+            has_border=False
+        )
         
-        # Newsletter title
-        left = Inches(0.5)
-        top = Inches(0.3)
-        width = Inches(8)
-        height = Inches(1)
+        # Add logo if available
+        if self.logo_path.exists():
+            try:
+                logo_left = Inches(0.5)
+                logo_top = Inches(0.4)
+                logo = slide.shapes.add_picture(
+                    str(self.logo_path), 
+                    logo_left, logo_top, 
+                    height=Inches(0.7)
+                )
+                title_left = Inches(1.8)
+            except Exception as e:
+                logger.warning(f"Could not add logo: {e}")
+                title_left = Inches(0.5)
+        else:
+            title_left = Inches(0.5)
         
-        title_box = slide.shapes.add_textbox(left, top, width, height)
+        # Add title
+        title_box = slide.shapes.add_textbox(
+            Inches(title_left), Inches(0.4),
+            Inches(8), Inches(0.8)
+        )
         title_frame = title_box.text_frame
-        title_frame.word_wrap = True
         
+        # Main title
         p = title_frame.paragraphs[0]
-        p.text = title
-        p.font.name = self.fonts['heading']
+        p.text = title.upper()
+        p.font.name = self.fonts['heading'].split(',')[0].strip()
         p.font.size = Pt(28)
         p.font.bold = True
         p.font.color.rgb = RGBColor(*self.colors['primary'])
-        p.alignment = PP_ALIGN.LEFT
+        p.space_after = Pt(4)
         
-        # Issue info (date, volume, etc.)
+        # Add issue info
         if issue_info:
-            left = Inches(8.5)
-            top = Inches(0.4)
-            width = Inches(3)
-            height = Inches(0.8)
-            
-            info_box = slide.shapes.add_textbox(left, top, width, height)
-            info_frame = info_box.text_frame
-            
-            p = info_frame.paragraphs[0]
-            p.text = issue_info
-            p.font.name = self.fonts['body']
-            p.font.size = Pt(12)
+            p = title_frame.add_paragraph()
+            p.text = issue_info.upper()
+            p.font.name = self.fonts['subheading'].split(',')[0].strip()
+            p.font.size = Pt(10)
+            p.font.color.rgb = RGBColor(*self.colors['light_text'])
+            p.space_before = 0
+            p.space_after = 0
+        
+        # Add date on the right side
+        if issue_info:
+            date_box = slide.shapes.add_textbox(
+                Inches(10), Inches(0.6),
+                Inches(3), Inches(0.5)
+            )
+            date_frame = date_box.text_frame
+            p = date_frame.paragraphs[0]
+            p.text = datetime.now().strftime('%B %d, %Y')
+            p.font.name = self.fonts['body'].split(',')[0].strip()
+            p.font.size = Pt(10)
+            p.font.italic = True
             p.font.color.rgb = RGBColor(*self.colors['light_text'])
             p.alignment = PP_ALIGN.RIGHT
     
-    def _add_article_card(self, slide, article: Dict[str, Any], 
-                         position: Tuple[float, float, float, float]) -> None:
-        """Add a card-style article layout"""
+    def _create_content_box(self, slide, position: Tuple[float, float, float, float], 
+                          title: str = "", has_border: bool = True) -> tuple:
+        """Create a structured content box with optional title"""
         left, top, width, height = position
         
-        # Card background
-        card = slide.shapes.add_shape(
-            MSO_SHAPE.ROUNDED_RECTANGLE, 
-            Inches(left), Inches(top), 
-            Inches(width), Inches(height)
+        # Convert to points for precision
+        left_pt = Inches(left)
+        top_pt = Inches(top)
+        width_pt = Inches(width)
+        height_pt = Inches(height)
+        
+        # Create main box
+        box = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            left_pt, top_pt,
+            width_pt, height_pt
         )
         
-        # Card styling
-        fill = card.fill
+        # Style the box
+        fill = box.fill
         fill.solid()
         fill.fore_color.rgb = RGBColor(*self.colors['white'])
         
-        # Card border
-        line = card.line
-        line.color.rgb = RGBColor(*self.colors['border'])
-        line.width = Pt(1)
+        line = box.line
+        if has_border:
+            line.color.rgb = RGBColor(*self.colors['border'])
+            line.width = Pt(1)
+        else:
+            line.fill.background()
         
-        # Add shadow effect (simulated with another shape)
-        shadow = slide.shapes.add_shape(
-            MSO_SHAPE.ROUNDED_RECTANGLE,
-            Inches(left + 0.05), Inches(top + 0.05),
-            Inches(width), Inches(height)
-        )
-        shadow.fill.solid()
-        shadow.fill.fore_color.rgb = RGBColor(220, 220, 220)
-        shadow.line.fill.background()
-        shadow.z_order = card.z_order - 1
-        
-        # Category tag
-        categories = article.get('categories', ['News'])
-        if categories:
-            tag_left = Inches(left + 0.2)
-            tag_top = Inches(top + 0.2)
-            tag_width = Inches(1.5)
-            tag_height = Inches(0.3)
-            
-            tag = slide.shapes.add_shape(
-                MSO_SHAPE.ROUNDED_RECTANGLE,
-                tag_left, tag_top, tag_width, tag_height
+        # Add title if provided
+        title_box = None
+        if title:
+            # Title background
+            title_bg = slide.shapes.add_shape(
+                MSO_SHAPE.RECTANGLE,
+                left_pt, top_pt,
+                width_pt, Pt(40)
             )
+            title_bg.fill.solid()
+            title_bg.fill.fore_color.rgb = RGBColor(*self.colors['primary'])
+            title_bg.line.fill.background()
             
-            tag.fill.solid()
-            tag.fill.fore_color.rgb = RGBColor(*self.colors['secondary'])
-            tag.line.fill.background()
-            
-            # Tag text
-            tag_frame = tag.text_frame
-            tag_frame.margin_left = Inches(0.1)
-            tag_frame.margin_right = Inches(0.1)
-            tag_frame.margin_top = Inches(0.05)
-            tag_frame.margin_bottom = Inches(0.05)
-            
-            p = tag_frame.paragraphs[0]
-            p.text = categories[0].upper()
-            p.font.name = self.fonts['body']
-            p.font.size = Pt(8)
+            # Title text
+            title_box = slide.shapes.add_textbox(
+                left_pt + Pt(10), top_pt + Pt(5),
+                width_pt - Pt(20), Pt(30)
+            )
+            tf = title_box.text_frame
+            p = tf.paragraphs[0]
+            p.text = title.upper()
+            p.font.name = self.fonts['heading'].split(',')[0].strip()
+            p.font.size = Pt(14)
             p.font.bold = True
             p.font.color.rgb = RGBColor(*self.colors['white'])
-            p.alignment = PP_ALIGN.CENTER
+            p.space_after = 0
+            
+            # Adjust content area
+            top_pt += Pt(45)
+            height_pt -= Pt(45)
         
-        # Article title
-        title_left = Inches(left + 0.2)
-        title_top = Inches(top + 0.6)
-        title_width = Inches(width - 0.4)
-        title_height = Inches(0.8)
+        # Return content area coordinates
+        return (left_pt, top_pt, width_pt, height_pt, box, title_box)
         
-        title_box = slide.shapes.add_textbox(title_left, title_top, title_width, title_height)
-        title_frame = title_box.text_frame
-        title_frame.word_wrap = True
+    def _add_article_card(self, slide, article: Dict[str, Any], 
+                         position: Tuple[float, float, float, float]) -> None:
+        """Add a simple and reliable article card"""
+        from pptx.util import Inches, Pt
         
-        p = title_frame.paragraphs[0]
-        p.text = article.get('title', 'Article Title')
-        p.font.name = self.fonts['subheading']
-        p.font.size = Pt(16)
+        # Convert position tuple to inches
+        left, top, width, height = position
+        left_pt = Inches(left)
+        top_pt = Inches(top)
+        width_pt = Inches(width)
+        height_pt = Inches(height)
+        
+        # Add a simple white background
+        box = slide.shapes.add_shape(
+            MSO_SHAPE.RECTANGLE,
+            left_pt, top_pt, width_pt, height_pt
+        )
+        box.fill.solid()
+        box.fill.fore_color.rgb = RGBColor(255, 255, 255)
+        box.line.color.rgb = RGBColor(220, 220, 220)
+        box.line.width = Pt(0.5)
+        
+        # Add content with padding
+        padding = Pt(10)
+        content_left = left_pt + padding
+        content_top = top_pt + padding
+        content_width = width_pt - (2 * padding)
+        
+        # Add title
+        title_box = slide.shapes.add_textbox(
+            content_left, content_top,
+            content_width, Pt(40)
+        )
+        tf = title_box.text_frame
+        p = tf.paragraphs[0]
+        p.text = article.get('title', 'No Title')
+        p.font.name = 'Arial'
+        p.font.size = Pt(14)
         p.font.bold = True
-        p.font.color.rgb = RGBColor(*self.colors['dark'])
-        
-        # Article content preview
-        content_left = Inches(left + 0.2)
-        content_top = Inches(top + 1.5)
-        content_width = Inches(width - 0.4)
-        content_height = Inches(height - 2.2)
-        
-        content_box = slide.shapes.add_textbox(content_left, content_top, content_width, content_height)
-        content_frame = content_box.text_frame
-        content_frame.word_wrap = True
-        
-        content = article.get('content', '')
-        preview = content[:150] + "..." if len(content) > 150 else content
-        
-        p = content_frame.paragraphs[0]
-        p.text = preview
-        p.font.name = self.fonts['body']
-        p.font.size = Pt(11)
-        p.font.color.rgb = RGBColor(*self.colors['dark'])
         p.space_after = Pt(8)
         
-        # Source and date
-        source_left = Inches(left + 0.2)
-        source_top = Inches(top + height - 0.5)
-        source_width = Inches(width - 0.4)
-        source_height = Inches(0.3)
+        # Add source and date below title
+        source_text = f"{article.get('source', 'Source')} • {article.get('date', '')}"
+        source_box = slide.shapes.add_textbox(
+            content_left, content_top + Pt(25),
+            content_width, Pt(15)
+        )
+        tf = source_box.text_frame
+        p = tf.paragraphs[0]
+        p.text = source_text.upper()
+        p.font.name = 'Arial'
+        p.font.size = Pt(8)
+        p.font.color.rgb = RGBColor(100, 100, 100)
+        p.space_after = Pt(15)
         
-        source_box = slide.shapes.add_textbox(source_left, source_top, source_width, source_height)
-        source_frame = source_box.text_frame
+        # Add summary
+        summary_box = slide.shapes.add_textbox(
+            content_left, content_top + Pt(50),
+            content_width, height_pt - Pt(80)
+        )
+        tf = summary_box.text_frame
+        tf.word_wrap = True
+        p = tf.paragraphs[0]
+        p.text = article.get('summary', 'No summary available.')
+        p.font.name = 'Arial'
+        p.font.size = Pt(10)
+        p.space_after = Pt(6)
         
-        p = source_frame.paragraphs[0]
-        source = article.get('source', 'Unknown Source')
-        date = article.get('date', '')
-        if date:
-            try:
-                date = datetime.strptime(date, '%Y-%m-%d').strftime('%b %d, %Y')
-            except:
-                pass
-        
-        p.text = f"{source} • {date}" if date else source
-        p.font.name = self.fonts['body']
-        p.font.size = Pt(9)
-        p.font.color.rgb = RGBColor(*self.colors['light_text'])
-        p.font.italic = True
+        # Add category tag at bottom if available
+        if 'categories' in article and article['categories']:
+            category = article['categories'][0][:20]  # Limit length
+            tag_top = top_pt + height_pt - Pt(25)
+            
+            # Simple text tag
+            tag_box = slide.shapes.add_textbox(
+                content_left, tag_top,
+                Pt(100), Pt(15)
+            )
+            tf = tag_box.text_frame
+            p = tf.paragraphs[0]
+            p.text = f"{category.upper()}"
+            p.font.name = 'Arial'
+            p.font.size = Pt(8)
+            p.font.bold = True
+            p.font.color.rgb = RGBColor(0, 120, 212)  # Blue accent
     
     def _add_stats_visualization(self, slide, insights: List[Dict[str, Any]]) -> None:
         """Add a simple statistics visualization"""
@@ -475,31 +654,49 @@ class NewsletterPPTGenerator:
         # Background
         self._create_gradient_background(slide, self.colors['background'], self.colors['white'])
         
-        # Header
+        # Header with reduced bottom margin
         issue_info = datetime.now().strftime("%B %Y") + " Newsletter"
         self._add_newsletter_header(slide, slide_title or "Latest Updates", issue_info)
         
-        # Add article cards in a grid layout
+        # Calculate available height (total slide height - header - bottom margin)
+        available_height = 6.0  # Total available height in inches (from 1.5 to 7.5)
+        
+        # Add article cards in a grid layout with better spacing
         if len(insights) == 1:
-            # Single large article
-            self._add_article_card(slide, insights[0], (1.5, 1.5, 9, 4.5))
+            # Single large article with more vertical space
+            self._add_article_card(slide, insights[0], (1.5, 1.5, 10.0, 5.0))
         elif len(insights) == 2:
-            # Two side-by-side articles
-            self._add_article_card(slide, insights[0], (0.5, 1.5, 5.5, 4.5))
-            self._add_article_card(slide, insights[1], (6.5, 1.5, 5.5, 4.5))
+            # Two side-by-side articles with adjusted spacing
+            self._add_article_card(slide, insights[0], (0.5, 1.5, 5.5, 5.5))
+            self._add_article_card(slide, insights[1], (6.5, 1.5, 5.5, 5.5))
         else:
-            # Multiple articles in grid
-            positions = [
-                (0.5, 1.5, 3.8, 2.8),   # Top left
-                (4.6, 1.5, 3.8, 2.8),   # Top center
-                (8.7, 1.5, 3.8, 2.8),   # Top right
-                (0.5, 4.5, 3.8, 2.8),   # Bottom left
-                (4.6, 4.5, 3.8, 2.8),   # Bottom center
-                (8.7, 4.5, 3.8, 2.8),   # Bottom right
-            ]
+            # Multiple articles in grid with adjusted spacing
+            # Calculate dynamic positions based on number of articles
+            if len(insights) <= 4:
+                # 2x2 grid for 3-4 articles
+                positions = [
+                    (0.8, 1.5, 5.5, 2.5),   # Top left
+                    (7.0, 1.5, 5.5, 2.5),   # Top right
+                    (0.8, 4.2, 5.5, 2.5),   # Bottom left
+                    (7.0, 4.2, 5.5, 2.5),   # Bottom right
+                ]
+            else:
+                # 3x2 grid for 5-6 articles
+                positions = [
+                    (0.5, 1.5, 4.0, 2.5),   # Row 1, Col 1
+                    (4.8, 1.5, 4.0, 2.5),   # Row 1, Col 2
+                    (9.1, 1.5, 4.0, 2.5),   # Row 1, Col 3
+                    (0.5, 4.2, 4.0, 2.5),   # Row 2, Col 1
+                    (4.8, 4.2, 4.0, 2.5),   # Row 2, Col 2
+                    (9.1, 4.2, 4.0, 2.5),   # Row 2, Col 3
+                ]
             
             for i, insight in enumerate(insights[:6]):  # Max 6 articles per slide
                 if i < len(positions):
+                    # Truncate content if needed before adding to card
+                    if 'content' in insight and len(insight['content']) > 120:
+                        insight = insight.copy()  # Don't modify original
+                        insight['content'] = insight['content'][:120] + '...'
                     self._add_article_card(slide, insight, positions[i])
     
     def _add_summary_slide(self, prs: Presentation, insights: List[Dict[str, Any]]) -> None:

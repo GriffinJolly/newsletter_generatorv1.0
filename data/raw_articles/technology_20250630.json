@@ -1,0 +1,56 @@
+{
+  "query": "Technology",
+  "date": "2025-06-30T10:48:53.366095",
+  "articles": [
+    {
+      "source": "Wired",
+      "author": "Lisa Wood Shapiro",
+      "title": "Plantaform Smart Indoor Garden Review: Rewarding but Risky",
+      "description": "We tested this unique indoor gardening solution that utilizes NASA technology, but air quality data raised concerns.",
+      "url": "https://www.wired.com/review/plantaform-smart-indoor-garden/",
+      "urlToImage": "https://media.wired.com/photos/6846cc404fbb2878931dbfd7/191:100/w_1280,c_limit/Review-%20Plantaform%20Smart%20Indoor%20Garden_.png",
+      "publishedAt": "2025-06-27T05:46:47Z",
+      "content": "It was about a week into my journey as a hydroponic lettuce farmer when I noticed my Mila air purifier, set to auto mode, was running at full blast. Its internal air quality sensor told me the air wa… [+4100 chars]"
+    },
+    {
+      "source": "BBC News",
+      "author": null,
+      "title": "How 3D-printed guns are spreading online",
+      "description": "The technology to build your own lethal weapon is promoted on social media",
+      "url": "https://www.bbc.com/news/articles/cvg84rke4ejo",
+      "urlToImage": "https://ichef.bbci.co.uk/news/1024/branded_news/0307/live/ea26bdf0-4b80-11f0-86d5-3b52b53af158.png",
+      "publishedAt": "2025-06-19T00:17:34Z",
+      "content": "3D-printed guns could become \"the weapon of choice\" for criminals and violent extremists around the world, an expert has told the BBC. These DIY, untraceable firearms have been recovered in several r… [+6362 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Jacob Kastrenakes",
+      "title": "Futureproof",
+      "description": "AI tools are flooding the culture ecosystem — and no corner of the arts space is immune. In this series, we’re looking at the ways artists are embracing AI, pushing back on it, or trying their best to find an equilibrium with a new technology that’s both swee…",
+      "url": "https://www.theverge.com/ai-artificial-intelligence/688592/futureproof-artists-and-ai",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/06/257666_futureproofing_jgibbs-header.jpg?quality=90&strip=all&crop=0%2C10.761835884455%2C100%2C78.47632823109&w=1200",
+      "publishedAt": "2025-06-18T16:15:59Z",
+      "content": "AI tools are flooding the culture ecosystem — and no corner of the arts space is immune. In this series, we’re looking at the ways artists are embracing AI, pushing back on it, or trying their best t… [+463 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Emma Roth",
+      "title": "Max will show autoplaying video previews picked by AI",
+      "description": "Max — soon to be called HBO Max again — is rolling out an update that automatically plays video previews when you hover over shows and movies. The video previews are launching to users in the US now, but Max is still working on an “AI-assisted” tool to pick t…",
+      "url": "https://www.theverge.com/news/688313/max-video-previews-autoplay-update",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/06/Preview-Rail_Hacks.png?quality=90&strip=all&crop=0%2C0%2C94.061083621892%2C87.549447353112&w=1200",
+      "publishedAt": "2025-06-17T16:18:02Z",
+      "content": "The AI tool will identify standout scenes across Maxs library of shows and movies.\r\nMax soon to be called HBO Max again is rolling out an update that automatically plays video previews when you hover… [+1056 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Jess Weatherbed",
+      "title": "OpenAI awarded $200 million US defense contract",
+      "description": "OpenAI is officially on the Pentagon’s payroll. The Department of Defence announced a $200 million contract with OpenAI to provide the US government with new artificial intelligence tools, including those used for proactive cyber defense. In a post outlining …",
+      "url": "https://www.theverge.com/news/688041/openai-us-defense-department-200-million-contract",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/02/STK155_OPEN_AI_2025_CVirgiia_C.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200",
+      "publishedAt": "2025-06-17T09:35:46Z",
+      "content": "OpenAI will provide the DoD with AI tools for admin, data collection, and proactive cyber defense.\r\nOpenAI is officially on the Pentagons payroll. The Department of Defence announced a $200 million c… [+2393 chars]"
+    }
+  ]
+}
