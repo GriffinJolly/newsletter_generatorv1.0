@@ -1,0 +1,56 @@
+{
+  "query": "Technology",
+  "date": "2025-07-26T22:32:06.058654",
+  "articles": [
+    {
+      "source": "The Verge",
+      "author": "Emma Roth",
+      "title": "Ring reintroduces video sharing with police",
+      "description": "Ring has once again started letting police request footage from users. Axon, a law enforcement technology company and maker of TASER, announced in April that it’s partnering with Ring to allow customers to share “relevant video with law enforcement to help so…",
+      "url": "https://www.theverge.com/news/709836/ring-police-video-sharing-police-axon-partnership",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/07/Battery_Doorbell_Pro_3.webp?quality=90&strip=all&crop=0%2C10.319647285754%2C100%2C79.360705428493&w=1200",
+      "publishedAt": "2025-07-18T16:51:26Z",
+      "content": "The video doorbell company is partnering with TASER-maker Axon.\r\nRing has once again started letting police request footage from users. Axon, a law enforcement technology company and maker of TASER, … [+2160 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Jay Peters",
+      "title": "Indiegogo is getting acquired by Gamefound, a board game crowdfunding company",
+      "description": "Indiegogo is being acquired by the board game crowdfunding platform Gamefound, which plans on “integrating Indiegogo’s global community of 38 million members with Gamefound’s state-of-the-art crowdfunding technology,” the companies announced this morning. Gam…",
+      "url": "https://www.theverge.com/news/712733/indiegogo-acquired-gamefound-crowdfunding",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/07/GAMEFOUND_INDIEGOGO.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200",
+      "publishedAt": "2025-07-24T00:02:30Z",
+      "content": "<ul><li></li><li></li><li></li></ul>\r\nBoth platforms will continue to exist separately.\r\nBoth platforms will continue to exist separately.\r\nby\r\nJay PetersClose\r\nJay Peters\r\nPosts from this author wil… [+2793 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Jess Weatherbed",
+      "title": "Delta Air Lines is using AI to set the maximum price you’re willing to pay",
+      "description": "Delta Air Lines is leaning into dynamic ticket pricing that uses artificial intelligence to individually determine the highest fee you’d willingly pay for flights, according to comments Fortune spotted in the company’s latest earnings call. Following a limite…",
+      "url": "https://www.theverge.com/news/709556/delta-air-lines-ai-ticket-price-rollout",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/07/gettyimages-2223798482.jpg?quality=90&strip=all&crop=0%2C10.740554568055%2C100%2C78.518890863889&w=1200",
+      "publishedAt": "2025-07-18T10:50:57Z",
+      "content": "Delta wants AI to set 20 percent of its ticket prices by the end of 2025. | Image: Saul Loeb/AFP via Getty Images\r\n\n\nDelta Air Lines is leaning into dynamic ticket pricing that uses artificial intell… [+2763 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Jay Peters",
+      "title": "T-Mobile is bringing low-latency tech to 5G for the first time",
+      "description": "Over the next few weeks, T-Mobile is expanding support for the L4S standard, which stands for “Low Latency, Low Loss, Scalable Throughput.” The technology helps high-priority internet packets move along with fewer delays, to make video calls and cloud games f…",
+      "url": "https://www.theverge.com/news/710312/t-mobile-low-latency-l4s-5g",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/04/acastro_STK067__01.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200",
+      "publishedAt": "2025-07-21T12:52:07Z",
+      "content": "Latency hitches that can interrupt video calls or slow down browsing could be reduced with L4S, and T-Mobile is the first wireless company using it in the US. \r\nLatency hitches that can interrupt vid… [+1986 chars]"
+    },
+    {
+      "source": "The Verge",
+      "author": "Lauren Feiner, Justine Calma, Hayden Field, Adi Robertson",
+      "title": "Breaking down Trump’s big gift to the AI industry",
+      "description": "President Donald Trump's plan to promote America's AI dominance involves discouraging \"woke AI,\" slashing state and federal regulations, and laying the groundwork to rapidly expand AI development and adoption. Trump's proposal, released on July 23rd, is a swe…",
+      "url": "https://www.theverge.com/policy/713788/trump-ai-action-plan-explainer",
+      "urlToImage": "https://platform.theverge.com/wp-content/uploads/sites/2/2025/07/gettyimages-2225853634.jpg?quality=90&strip=all&crop=0%2C10.732984293194%2C100%2C78.534031413613&w=1200",
+      "publishedAt": "2025-07-25T14:35:40Z",
+      "content": "<ul><li></li><li></li><li></li></ul>\r\nBreaking down Trumps big gift to the AI industry\r\nTrump wants everyone using AI as long as he agrees with what it says.\r\nby\r\nLauren FeinerClose\r\nLauren Feiner\r\nP… [+18275 chars]"
+    }
+  ]
+}

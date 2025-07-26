@@ -144,9 +144,9 @@ class InsightExtractor:
             logger.error(f"Error extracting insight categories: {str(e)}")
             return []
     
-    def extract_key_phrases(self, text: str, top_n: int = 5) -> List[Tuple[str, float]]:
+    def extract_key_phrases(self, text: str, top_n: int = 8) -> List[Tuple[str, float]]:
         """
-        Extract key phrases from text using noun chunks and named entities
+        Extract key phrases from text using noun chunks, named entities, and TF-IDF scoring
         
         Args:
             text: Input text
@@ -161,29 +161,130 @@ class InsightExtractor:
         try:
             doc = self.nlp(text)
             
-            # Count noun chunks
-            noun_chunks = list(doc.noun_chunks)
-            noun_chunk_texts = [chunk.text.lower() for chunk in noun_chunks]
+            # Get noun chunks and filter out common patterns
+            noun_chunks = []
+            for chunk in doc.noun_chunks:
+                # Filter out single common words unless they're proper nouns
+                if len(chunk.text.split()) > 1 or chunk.root.pos_ in ['PROPN', 'NOUN']:
+                    # Remove determiners from the beginning
+                    while len(chunk) > 1 and chunk[0].dep_ in ['det', 'prep', 'aux']:
+                        chunk = chunk[1:]
+                    if len(chunk) > 0:
+                        noun_chunks.append(chunk.text.lower())
             
-            # Count named entities
-            entities = [ent.text.lower() for ent in doc.ents]
+            # Get named entities
+            entities = [ent.text.lower() for ent in doc.ents if ent.label_ in ['ORG', 'PERSON', 'GPE', 'PRODUCT', 'EVENT']]
             
             # Combine and count frequencies
-            all_phrases = noun_chunk_texts + entities
-            phrase_counts = Counter(all_phrases)
+            all_phrases = noun_chunks + entities
             
-            # Get top phrases by frequency
-            top_phrases = phrase_counts.most_common(top_n)
+            # Calculate TF-IDF like scores
+            phrase_scores = {}
+            total_phrases = len(all_phrases)
+            
+            for phrase in set(all_phrases):
+                # Term frequency (normalized by document length)
+                tf = all_phrases.count(phrase) / total_phrases
+                
+                # Inverse document frequency (simplified)
+                # In a real implementation, you'd use a larger corpus for IDF
+                # Here we'll use the length of the phrase as a proxy for specificity
+                idf = 1 + (len(phrase.split()) * 0.2)
+                
+                # Position bonus (earlier mentions are often more important)
+                first_occurrence = text.lower().find(phrase)
+                position_bonus = 1.0
+                if first_occurrence >= 0:
+                    position = first_occurrence / len(text)
+                    position_bonus = 1.5 - position  # Higher for earlier mentions
+                
+                # Combine scores
+                score = tf * idf * position_bonus
+                
+                # Bonus for phrases that contain important terms
+                important_terms = {'announce', 'launch', 'develop', 'new', 'report', 'study', 'find', 'show', 'reveal'}
+                if any(term in phrase for term in important_terms):
+                    score *= 1.5
+                
+                phrase_scores[phrase] = score
+            
+            # Sort phrases by score and take top N
+            top_phrases = sorted(phrase_scores.items(), key=lambda x: x[1], reverse=True)[:top_n]
             
             # Normalize scores to 0-1 range
-            max_count = max([count for _, count in top_phrases], default=1)
-            scored_phrases = [(phrase, count/max_count) for phrase, count in top_phrases]
+            max_score = max([score for _, score in top_phrases], default=1.0)
+            if max_score > 0:
+                scored_phrases = [(phrase, score/max_score) for phrase, score in top_phrases]
+            else:
+                scored_phrases = [(phrase, score) for phrase, score in top_phrases]
             
             return scored_phrases
             
         except Exception as e:
             logger.error(f"Error extracting key phrases: {str(e)}")
             return []
+    
+    def _generate_detailed_summary(self, text: str, max_sentences: int = 8) -> str:
+        """
+        Generate a detailed summary of the text using extractive summarization
+        
+        Args:
+            text: Input text to summarize
+            max_sentences: Maximum number of sentences for the summary
+            
+        Returns:
+            Generated summary as a string
+        """
+        if not text:
+            return ""
+            
+        try:
+            # Process the text with spaCy
+            doc = self.nlp(text)
+            
+            # Extract sentences and their importance scores
+            sentence_scores = []
+            for sent in doc.sents:
+                # Calculate score based on sentence length and position
+                # Give more weight to sentences that contain named entities or key terms
+                entity_score = len([ent for ent in sent.ents]) * 0.5
+                term_score = sum(1 for token in sent if token.is_alpha and token.lemma_.lower() in {
+                    'announce', 'launch', 'develop', 'introduce', 'partner', 'collaborate',
+                    'increase', 'grow', 'expand', 'invest', 'fund', 'raise', 'acquire',
+                    'merge', 'release', 'report', 'according', 'show', 'reveal', 'indicate'
+                })
+                
+                # Position-based scoring (first and last sentences are often important)
+                position = sent.start / len(list(doc.sents))
+                position_score = 1.5 - abs(position - 0.5)  # Higher for start/end
+                
+                # Combine scores
+                score = (entity_score + term_score + position_score) * len(sent.text.split())
+                sentence_scores.append((sent.text.strip(), score, sent.start))
+            
+            # Sort sentences by score (highest first)
+            sentence_scores.sort(key=lambda x: x[1], reverse=True)
+            
+            # Take top sentences and reorder them by original position
+            top_sentences = sorted(sentence_scores[:max_sentences], key=lambda x: x[2])
+            
+            # Join sentences to form the summary
+            summary = ' '.join([s[0] for s in top_sentences])
+            
+            # Ensure the summary is not too short
+            if len(summary.split()) < 50 and len(text.split()) > 100:  # If summary is too short but text is long
+                # Fall back to first few sentences
+                sentences = [sent.text.strip() for sent in doc.sents]
+                summary = ' '.join(sentences[:min(5, len(sentences))])
+                
+            return summary
+            
+        except Exception as e:
+            logger.error(f"Error generating summary: {str(e)}")
+            # Fallback to first 2 sentences
+            doc = self.nlp(text)
+            sentences = [sent.text.strip() for sent in doc.sents]
+            return ' '.join(sentences[:2]) if len(sentences) > 1 else text[:500] + '...'
     
     def extract_insights(self, article: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -204,6 +305,9 @@ class InsightExtractor:
             if not text:
                 return {}
             
+            # Generate detailed summary
+            summary = self._generate_detailed_summary(text)
+            
             # Extract entities
             entities = self.extract_entities(text)
             
@@ -211,7 +315,7 @@ class InsightExtractor:
             categories = self.extract_insight_categories(text)
             
             # Extract key phrases
-            key_phrases = self.extract_key_phrases(text)
+            key_phrases = self.extract_key_phrases(text, top_n=8)  # Get more key phrases for better context
             
             # Prepare result
             insights = {
@@ -219,7 +323,14 @@ class InsightExtractor:
                 'categories': categories,
                 'key_phrases': key_phrases,
                 'primary_category': categories[0] if categories else 'other',
-                'relevance_score': self._calculate_relevance_score(article, categories, key_phrases)
+                'relevance_score': self._calculate_relevance_score(article, categories, key_phrases),
+                'summary': summary,  # Add the generated summary
+                'detailed_analysis': {
+                    'key_points': [phrase[0] for phrase in key_phrases[:5]],
+                    'mentioned_organizations': entities.get('ORG', [])[:5],
+                    'mentioned_people': entities.get('PERSON', [])[:3],
+                    'mentioned_locations': entities.get('GPE', [])[:3]
+                }
             }
             
             # Add to article

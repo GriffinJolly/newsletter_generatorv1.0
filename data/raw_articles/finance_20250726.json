@@ -1,0 +1,56 @@
+{
+  "query": "Finance",
+  "date": "2025-07-26T22:32:07.369546",
+  "articles": [
+    {
+      "source": "Wired",
+      "author": "Henry Farrell, Abraham L. Newman",
+      "title": "The Enshittification of American Power",
+      "description": "First Google and Facebook, then the world. Under Trump 2.0, US statecraft is starting to mimic the worst tendencies of Big Tech.",
+      "url": "https://www.wired.com/story/enshittification-of-american-power/",
+      "urlToImage": "https://media.wired.com/photos/68753a215fc1ea74f2b1b7c9/191:100/w_1280,c_limit/WIRED_US_enshittification_infrastructure_4-5.jpg",
+      "publishedAt": "2025-07-15T10:00:00Z",
+      "content": "For decades, allies of the United States lived comfortably amid the sprawl of American hegemony. They constructed their financial institutions, communications systems, and national defense on top of … [+3359 chars]"
+    },
+    {
+      "source": "Business Insider",
+      "author": "Aditi Bharade",
+      "title": "Chipotle customers are eating less beef — and going for this protein instead",
+      "description": "The chain's finance chief said customers who used to opt for steak and barbacoa proteins are \"shifting a little bit more to chicken.\"",
+      "url": "https://www.businessinsider.com/chipotle-customers-eating-less-beef-going-for-chicken-instead-2025-7",
+      "urlToImage": "https://i.insider.com/6881dbaf3d5881a51c1de706?width=1200&format=jpeg",
+      "publishedAt": "2025-07-24T07:32:02Z",
+      "content": "A Chipotle exec said the chain is seeing more customers switch to lower-priced meats.Brandon Bell/Getty Images\r\n<ul><li>At Chipotle, chicken is now the meat of choice over beef.</li><li>The chain's f… [+2456 chars]"
+    },
+    {
+      "source": "NPR",
+      "author": "Deepa Shivaram",
+      "title": "Trump aims to get rid of AI regulations and finance exports to win AI race",
+      "description": "President Trump says he wants to make sure the United States wins the artificial intelligence race. The White House says fewer regulations will help.",
+      "url": "https://www.npr.org/2025/07/23/nx-s1-5213904/trump-ai-regulations",
+      "urlToImage": "https://npr.brightspotcdn.com/dims3/default/strip/false/crop/3824x2151+0+0/resize/1400/quality/100/format/jpeg/?url=http%3A%2F%2Fnpr-brightspot.s3.amazonaws.com%2F43%2Fc7%2Fb545d65a49debf4d923b714887e0%2Fgettyimages-2225673994.jpg",
+      "publishedAt": "2025-07-23T15:34:08Z",
+      "content": "The Trump White House intends to get rid of regulations that artificial intelligence developers see as hindering innovation including measures related to boosting diversity, equity and inclusion, and… [+1602 chars]"
+    },
+    {
+      "source": "Gizmodo.com",
+      "author": "Luc Olinga",
+      "title": "No More Waiting: New Crypto Law Unlocks Cheaper, Faster Money for Everyone",
+      "description": "The GENIUS Act gives stablecoins real legal backing, paving the way for instant payments, lower fees, and a safer digital dollar you can actually trust.",
+      "url": "https://gizmodo.com/no-more-waiting-new-crypto-law-unlocks-cheaper-faster-money-for-everyone-2000631238",
+      "urlToImage": "https://gizmodo.com/app/uploads/2024/04/0ddbd47a359dbefbb14c16d0ffe99a95.jpg",
+      "publishedAt": "2025-07-18T11:52:16Z",
+      "content": "For more than a decade, cryptocurrency lived in legal limbo. It was too weird to regulate, too volatile to trust, and too new for Washington to take seriously. That just changed.\r\nThe U.S. House of R… [+3321 chars]"
+    },
+    {
+      "source": "VentureBeat",
+      "author": "Emilia David",
+      "title": "Anthropic launches finance-specific Claude with built-in data connectors, higher limits and prompt libraries",
+      "description": "Anthropic is unveiling a financial sector-specific Claude version that will tackle data connectors and added rate limits for analysts.",
+      "url": "https://venturebeat.com/ai/financial-firms-get-a-purpose-built-claude-as-anthropic-bets-on-vertical-ai-platforms/",
+      "urlToImage": "https://venturebeat.com/wp-content/uploads/2024/07/finance3_ae310b.png?w=1024?w=1200&strip=all",
+      "publishedAt": "2025-07-15T11:00:00Z",
+      "content": "Want smarter insights in your inbox? Sign up for our weekly newsletters to get only what matters to enterprise AI, data, and security leaders.Subscribe Now\r\nAs some regulated enterprises cautiously e… [+5108 chars]"
+    }
+  ]
+}
