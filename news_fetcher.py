@@ -175,7 +175,7 @@ class NewsFetcher:
     def _parse_article(self, url: str) -> Optional[Dict[str, Any]]:
         """Parse an article from a URL using news-please"""
         try:
-            article = NewsPlease.from_url(url, timeout=10)
+            article = NewsPlease.from_url(url)
             if not article:
                 return None
                 
@@ -202,13 +202,28 @@ class NewsFetcher:
             return None
 
     def get_article_content(self, url: str) -> str:
-        """Extract full article content using news-please"""
+        """Extract full article content using news-please, then fallback to newspaper3k if needed."""
         try:
             article = self._parse_article(url)
-            return article.get('text', '') if article else ""
+            content = article.get('text', '') if article else ""
         except Exception as e:
-            print(f"Error extracting article content from {url}: {e}")
-            return ""
+            print(f"Error extracting article content from {url} with NewsPlease: {e}")
+            content = ""
+        # Secondary fallback: use newspaper3k if content is empty or very short
+        if not content or len(content) < 200:
+            try:
+                from newspaper import Article as NPArticle
+                np_article = NPArticle(url)
+                np_article.download()
+                np_article.parse()
+                np_content = np_article.text
+                # Use the longer of the two contents
+                if np_content and len(np_content) > len(content):
+                    content = np_content
+            except Exception as e2:
+                print(f"Error extracting article content from {url} with newspaper3k: {e2}")
+        return content
+
 
     def _get_sector_queries(self, sector: str) -> List[str]:
         """Get specific search queries for specialized sectors"""

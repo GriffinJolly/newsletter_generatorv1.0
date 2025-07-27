@@ -367,6 +367,27 @@ def generate_newsletter():
                 if not articles:
                     st.warning(f"No articles found for {sector}")
                     continue
+                # Fallback logic: check sentence count and try to get better content if needed
+                for idx, article in enumerate(articles):
+                    content = article.get('content', '')
+                    num_sentences = sum([s.strip() != '' for s in content.replace('!','.').replace('?','.').split('.')])
+                    fallback_triggered = False
+                    orig_len = len(content)
+                    if num_sentences < 6 and article.get('url'):
+                        full_content = fetcher.get_article_content(article['url'])
+                        new_sentences = sum([s.strip() != '' for s in full_content.replace('!','.').replace('?','.').split('.')]) if full_content else 0
+                        if full_content and len(full_content) > orig_len:
+                            article['content'] = full_content
+                            fallback_triggered = True
+                    # Streamlit debug output for this article
+                    st.write({
+                        'sector': sector,
+                        'article_idx': idx,
+                        'title': article.get('title',''),
+                        'orig_sentence_count': num_sentences,
+                        'fallback_triggered': fallback_triggered,
+                        'new_sentence_count': sum([s.strip() != '' for s in article.get('content','').replace('!','.').replace('?','.').split('.')])
+                    })
                 news_data[sector] = articles
                 st.success(f"Found {len(articles)} articles for {sector}")
             except Exception as e:
