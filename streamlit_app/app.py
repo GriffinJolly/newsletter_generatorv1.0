@@ -1,3 +1,6 @@
+import sys
+# Patch for Streamlit watcher bug with torch._classes
+sys.modules['torch._classes'] = None
 import streamlit as st
 import os
 from datetime import datetime, timedelta

@@ -87,6 +87,24 @@ class NewsAPIFetcher(NewsFetcher):
                     'author': article.get('author', ''),
                     'url_to_image': article.get('urlToImage', '')
                 }
+                # --- Full-text extraction logic ---
+                try:
+                    content = processed['content'] or ''
+                    url = processed['url']
+                    if url and (not content or len(content) < 500):
+                        from newspaper import Article as NPArticle
+                        np_article = NPArticle(url)
+                        np_article.download()
+                        np_article.parse()
+                        full_text = np_article.text.strip()
+                        if full_text and len(full_text) > len(content):
+                            processed['content'] = full_text
+                            logger.info(f"Full-text extracted for: {url} (length={len(full_text)})")
+                        else:
+                            logger.info(f"No longer full-text found for: {url}")
+                except Exception as ex:
+                    logger.warning(f"Full-text extraction failed for {processed.get('url','')}: {ex}")
+                # --- End full-text extraction ---
                 articles.append(processed)
             
             self.save_articles(articles, 'newsapi')
@@ -136,6 +154,24 @@ class GNewsFetcher(NewsFetcher):
                     'image': article.get('image', ''),
                     'source_url': article.get('url', '')
                 }
+                # --- Full-text extraction logic ---
+                try:
+                    content = processed['content'] or ''
+                    url = processed['url']
+                    if url and (not content or len(content) < 500):
+                        from newspaper import Article as NPArticle
+                        np_article = NPArticle(url)
+                        np_article.download()
+                        np_article.parse()
+                        full_text = np_article.text.strip()
+                        if full_text and len(full_text) > len(content):
+                            processed['content'] = full_text
+                            logger.info(f"Full-text extracted for: {url} (length={len(full_text)})")
+                        else:
+                            logger.info(f"No longer full-text found for: {url}")
+                except Exception as ex:
+                    logger.warning(f"Full-text extraction failed for {processed.get('url','')}: {ex}")
+                # --- End full-text extraction ---
                 articles.append(processed)
             
             self.save_articles(articles, 'gnews')

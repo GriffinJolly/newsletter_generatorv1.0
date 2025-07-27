@@ -475,9 +475,22 @@ class NewsletterPPTGenerator:
         p.font.color.rgb = RGBColor(1, 180, 228)  # Accent color
         p.space_after = Pt(12)
 
-        # Split summary into paragraphs for better readability
+        # Ensure summary is not truncated to 2 sentences or with ellipsis
         tf = title_box.text_frame
-        paragraphs = detailed_summary.split('\n\n')
+        # Take up to 15 sentences or 1200 chars, ending at a sentence boundary
+        import re
+        sentences = re.split(r'(?<=[.!?])\s+', detailed_summary)
+        summary_text = ' '.join(sentences[:15])
+        if len(summary_text) > 1200:
+            # Trim to 1200 chars, but end at last period
+            cut = summary_text[:1200]
+            last_period = cut.rfind('.')
+            if last_period > 0:
+                summary_text = cut[:last_period+1]
+            else:
+                summary_text = cut
+        # Split into paragraphs for better readability
+        paragraphs = summary_text.split('\n\n')
         for i, para in enumerate(paragraphs):
             if i > 0:
                 p = tf.add_paragraph()
@@ -743,7 +756,7 @@ class NewsletterPPTGenerator:
         p.font.bold = True
         p.font.color.rgb = RGBColor(*self.colors['primary'])
         
-    def _add_article_card(self, slide, article: Dict[str, Any], position: Tuple[float, float, float, float]) -> None:
+    def _add_article_card(self, slide, article: Dict[str, Any], position: Tuple[float, float, float, float]) -> bool:
         """Add an article card to the slide
         
         Args:
@@ -794,7 +807,43 @@ class NewsletterPPTGenerator:
             p.space_after = Pt(6)
             
             # Add article summary/content
-            content = article.get('summary') or article.get('content', 'No content available.')
+            summary = article.get('summary', '')
+            content = article.get('content', '')
+            if content and len(content) > len(summary):
+                display_content = content
+            else:
+                display_content = summary or 'No content available.'
+            logger.info(f"[PPT] Article: '{article.get('title','')}' | Summary len: {len(summary)} | Content len: {len(content)} | Used: {len(display_content)}")
+            # Filtering: skip if content is too short or irrelevant
+            min_sentences = 3
+            max_sentences = 15
+            irrelevant_phrases = [
+                "no content available", "click here", "read more", "subscribe", "copyright",
+                "submitting email", "terms and conditions"
+            ]
+            
+            # Remove sentences containing irrelevant phrases
+            import re
+            sentences = re.split(r'(?<=[.!?])\s+', display_content)
+            filtered_sentences = [s for s in sentences if not any(phrase in s.lower() for phrase in irrelevant_phrases)]
+            
+            # If not enough sentences, try fallback (original summary/content)
+            if len(filtered_sentences) < min_sentences:
+                fallback = article.get('summary', '') or article.get('content', '')
+                fallback_sentences = re.split(r'(?<=[.!?])\s+', fallback)
+                fallback_filtered = [s for s in fallback_sentences if not any(phrase in s.lower() for phrase in irrelevant_phrases)]
+                if len(fallback_filtered) >= min_sentences:
+                    filtered_sentences = fallback_filtered
+                    logger.info(f"[PPT] Used fallback content for article '{article.get('title','')}'")
+                else:
+                    logger.info(f"[PPT] Skipping article '{article.get('title','')}' due to insufficient/irrelevant content (even after fallback).")
+                    return False  # Skip this slide, return False
+            
+            # Truncate to max sentences
+            truncated_content = ' '.join(filtered_sentences[:max_sentences]).strip()
+            if len(filtered_sentences) > max_sentences:
+                truncated_content += ' ...'
+            display_content = truncated_content
             content_box = slide.shapes.add_textbox(
                 Inches(title_left), Inches(top + 1.4),
                 Inches(title_width - 0.2), Inches(height - 1.6)
@@ -849,7 +898,8 @@ class NewsletterPPTGenerator:
                 
         except Exception as e:
             logger.error(f"Error adding article card: {str(e)}")
-            raise
+            return False  # On error, return False
+        return True  # If no error or skip, slide was added successfully
     
     def _add_summary_slide(self, prs, insights: List[Dict[str, Any]]) -> None:
         """Add a summary slide to the presentation"""
@@ -869,12 +919,25 @@ class NewsletterPPTGenerator:
         
         # Add summary content
         summary_box = slide.shapes.placeholders[1]
-        summary_box.text = "This is a summary of the newsletter."
+        # Combine summaries from all insights, then enhance
+        combined_summary = '\n'.join([
+            insight.get('summary', '') or insight.get('content', '')
+            for insight in insights if insight.get('summary') or insight.get('content')
+        ])
+        # Use _enhance_summary to generate a detailed summary
+        detailed_summary = self._enhance_summary(combined_summary, {'content': combined_summary})
+        summary_box.text = detailed_summary
         tf = summary_box.text_frame
-        p = tf.paragraphs[0]
-        p.font.name = self.fonts['body'].split(',')[0].strip()
-        p.font.size = Pt(12)
-        p.font.color.rgb = RGBColor(*self.colors['dark'])
+        # Split into paragraphs for better readability
+        for i, para in enumerate(detailed_summary.split('\n')):
+            if i == 0:
+                p = tf.paragraphs[0]
+            else:
+                p = tf.add_paragraph()
+            p.text = para.strip()
+            p.font.name = self.fonts['body'].split(',')[0].strip()
+            p.font.size = Pt(12)
+            p.font.color.rgb = RGBColor(*self.colors['dark'])
         
         # Add a chart to visualize insights
         chart_left = Inches(1)
@@ -1005,8 +1068,7 @@ class NewsletterPPTGenerator:
         p.font.color.rgb = RGBColor(100, 100, 100)
         p.alignment = PP_ALIGN.CENTER
 
-    def generate_presentation(self, insights: List[Dict[str, Any]], 
-                                    output_path: Optional[str] = None) -> str:
+    def generate_presentation(self, insights: List[Dict[str, Any]], output_path: Optional[str] = None) -> str:
         """
         Generate a PowerPoint presentation from the given insights.
 
@@ -1030,23 +1092,82 @@ class NewsletterPPTGenerator:
                 insights_by_sector[sector].append(insight)
             
             # Add title slide
-            self._add_title_slide(
-                self.prs, 
-                "Weekly News Digest",
-                f"Week of {datetime.now().strftime('%B %d, %Y')}"
-            )
+            self._add_title_slide(self.prs, "Weekly Newsletter", datetime.now().strftime("%B %d, %Y"))
             
-            # Add content slides for each sector
-            for sector, items in insights_by_sector.items():
+            # Prepare fetchers for replacement logic
+            from scrapers.news_fetcher import NewsAPIFetcher, GNewsFetcher
+            fetcher_classes = {'NewsAPIFetcher': NewsAPIFetcher, 'GNewsFetcher': GNewsFetcher}
+            
+            # Add section and article slides
+            for sector, sector_insights in insights_by_sector.items():
                 # Add section header
-                self._add_section_header(self.prs, sector)
+                section_slide = self.prs.slides.add_slide(self.prs.slide_layouts[self.slide_layouts['section_header']])
+                self._add_newsletter_header(section_slide, sector)
                 
-                # Add content slides (max 3 articles per slide for readability)
-                for i in range(0, len(items), 3):
-                    batch = items[i:i+3]
-                    self._add_newsletter_content_slide(self.prs, batch, sector)
+                # Positioning for article cards
+                n_articles = len(sector_insights)
+                max_per_slide = 2
+                slide = None
+                pos_idx = 0
+                positions = [
+                    (0.5, 1.5, 6, 4.5),
+                    (7, 1.5, 6, 4.5)
+                ]
+                
+                used_urls = set()
+                for idx, article in enumerate(sector_insights):
+                    if pos_idx == 0:
+                        # Start new slide
+                        slide = self.prs.slides.add_slide(self.prs.slide_layouts[self.slide_layouts['content']])
+                        self._add_decorative_header_bar(slide)
+                    
+                    url = article.get('url')
+                    if url:
+                        used_urls.add(url)
+                    added = self._add_article_card(slide, article, positions[pos_idx])
+                    
+                    # If not added, try replacement logic
+                    if not added:
+                        # Determine which fetcher to use for replacement
+                        orig_source = article.get('source', '').lower()
+                        # Prefer alternate fetcher (not WebScraper, not SECFetcher)
+                        fetcher_order = ['NewsAPIFetcher', 'GNewsFetcher']
+                        if 'gnews' in orig_source:
+                            fetcher_order = ['NewsAPIFetcher']
+                        elif 'newsapi' in orig_source:
+                            fetcher_order = ['GNewsFetcher']
+                        else:
+                            fetcher_order = ['NewsAPIFetcher', 'GNewsFetcher']
+                        replacement_added = False
+                        for fetcher_name in fetcher_order:
+                            try:
+                                fetcher = fetcher_classes[fetcher_name](self.config)
+                                # Use sector as query; fallback to article title if sector is generic
+                                query = sector if sector.lower() != 'general' else article.get('title', '')
+                                results = fetcher.fetch(query, max_results=5)
+                                for cand in results:
+                                    cand_url = cand.get('url')
+                                    if cand_url and cand_url in used_urls:
+                                        continue
+                                    # Mark as used even if not added, to avoid infinite loops
+                                    if cand_url:
+                                        used_urls.add(cand_url)
+                                    cand_added = self._add_article_card(slide, cand, positions[pos_idx])
+                                    if cand_added:
+                                        logger.info(f"[PPT] Replacement article used from {fetcher_name} for sector '{sector}'")
+                                        replacement_added = True
+                                        break
+                                if replacement_added:
+                                    break
+                            except Exception as e:
+                                logger.error(f"[PPT] Error fetching replacement from {fetcher_name}: {e}")
+                        if not replacement_added:
+                            logger.info(f"[PPT] No suitable replacement found for skipped article in sector '{sector}'")
+                    pos_idx += 1
+                    if pos_idx == max_per_slide or idx == n_articles - 1:
+                        pos_idx = 0
             
-            # Add summary slide
+            # Add summary slide at the end
             self._add_summary_slide(self.prs, insights)
             
             # Save the presentation
@@ -1063,28 +1184,9 @@ class NewsletterPPTGenerator:
             logger.info(f"Newsletter presentation saved to {output_path}")
             
             return str(output_path)
-            
         except Exception as e:
             logger.error(f"Error generating presentation: {str(e)}")
             raise
-
-
-def load_insights_from_file(file_path: str) -> List[Dict[str, Any]]:
-    """
-    Load insights from a JSON file
-    
-    Args:
-        file_path: Path to JSON file containing insights
-        
-    Returns:
-        List of insight dictionaries
-    """
-    try:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    except Exception as e:
-        logger.error(f"Error loading insights from file: {str(e)}")
-        return []
 
 
 def generate_sample_insights() -> List[Dict[str, Any]]:

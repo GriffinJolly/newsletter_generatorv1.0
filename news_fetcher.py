@@ -65,7 +65,26 @@ class NewsFetcher:
                 article['source'] = article.get('source', {}).get('name', 'Unknown')
                 article['publishedAt'] = article.get('publishedAt', datetime.now().isoformat())
                 article['urlToImage'] = article.get('urlToImage', '')
-                
+                # --- Full-text extraction logic ---
+                try:
+                    content = article.get('content', '') or ''
+                    url = article.get('url', '')
+                    print(f"[DEBUG] Before extraction: url={url} content_len={len(content)}")
+                    if url and (not content or len(content) < 500):
+                        from newspaper import Article as NPArticle
+                        np_article = NPArticle(url)
+                        np_article.download()
+                        np_article.parse()
+                        full_text = np_article.text.strip()
+                        print(f"[DEBUG] After extraction: url={url} extracted_len={len(full_text)}")
+                        if full_text and len(full_text) > len(content):
+                            article['content'] = full_text
+                            print(f"Full-text extracted for: {url} (length={len(full_text)})")
+                        else:
+                            print(f"No longer full-text found for: {url}")
+                except Exception as ex:
+                    print(f"Full-text extraction failed for {article.get('url','')}: {ex}")
+                # --- End full-text extraction ---
             return articles
             
         except requests.exceptions.RequestException as e:
